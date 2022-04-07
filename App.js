@@ -4,13 +4,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import SignIn from "./src/Components/Authentication/SignIn";
 import Home from "./src/Components/Home/Home";
 import { axios } from "./src/API/Axios";
 import AddContact from "./src/Components/Contact/AddContact";
 import Contacts from "./src/Components/Contact/Contacts";
+import Profile from "./src/Components/Home/Profile";
 
 const AuthContext = React.createContext();
 const Stack = createStackNavigator();
@@ -94,10 +95,16 @@ export default function App({ navigation }) {
         {...props}
         navigation={navigation}
         logout={() => {
+          AsyncStorage.clear();
           dispatch({ type: "SIGN_OUT" });
         }}
       />
     );
+  };
+  const ProfileScreen = props => {
+    const navigation = useNavigation();
+
+    return <Profile {...props} navigation={navigation} />;
   };
   return (
     <AuthContext.Provider value={authContext}>
@@ -143,6 +150,14 @@ export default function App({ navigation }) {
                   options={{
                     animationTypeForReplace: state.isSignout ? "pop" : "push",
                     title: "Phone Book",
+                  }}
+                />
+                <Stack.Screen
+                  name="Profile"
+                  component={ProfileScreen}
+                  options={{
+                    animationTypeForReplace: state.isSignout ? "pop" : "push",
+                    title: "Profile",
                   }}
                 />
               </>
