@@ -7,12 +7,39 @@ import IconAnt from "react-native-vector-icons/AntDesign";
 import IconMat from "react-native-vector-icons/MaterialCommunityIcons";
 import { Input } from "galio-framework";
 import { ListItem, Avatar } from "@rneui/themed";
+import { axios } from "../../API/Axios";
+import Drawer from "react-native-drawer";
 
 export default class Home extends Component {
   state = {
     loading: false,
+    contacts: [],
+    term: "",
   };
-
+  async componentDidMount() {
+    await axios.get("/contact").then(res => {
+      this.setState({ contacts: res.data.response.data.contacts });
+    });
+  }
+  searchHandleSubmit = async () => {
+    this.setState({ loading: true });
+    if (this.state.term !== "") {
+      await axios.get(`/search?term=${this.state.term}`).then(res => {
+        this.setState({
+          loading: false,
+          contacts: res.data.response.data.contacts,
+        });
+      });
+    }
+    this.setState({
+      loading: false,
+    });
+  };
+  onRefreshHandler = async () => {
+    await axios.get("/contact").then(res => {
+      this.setState({ contacts: res.data.response.data.contacts, term: "" });
+    });
+  };
   render() {
     return (
       <View style={{ width: "100%" }}>
@@ -69,7 +96,7 @@ export default class Home extends Component {
                 iconContainerStyle={{ background: "#000" }}
                 loadingProps={{ animating: true }}
                 loadingStyle={{}}
-                onPress={() => alert("click")}
+                onPress={() => this.props.navigation.push("AddNewContact")}
                 titleProps={{}}
               />
               <Text
@@ -89,7 +116,7 @@ export default class Home extends Component {
                 iconContainerStyle={{ background: "#000" }}
                 loadingProps={{ animating: true }}
                 loadingStyle={{}}
-                onPress={() => alert("click")}
+                onPress={() => this.props.navigation.push("Contacts")}
                 titleProps={{}}
               />
               <Text
@@ -136,6 +163,7 @@ export default class Home extends Component {
         <Input
           style={{ width: "90%", alignSelf: "center" }}
           placeholder="Search"
+          onChangeText={e => this.setState({ term: e })}
           type="default"
         />
         <Button
@@ -143,122 +171,36 @@ export default class Home extends Component {
           loadingProps={{ animating: true }}
           title="Search"
           loading={this.state.loading}
+          onPress={this.searchHandleSubmit}
           titleStyle={{ marginHorizontal: 5 }}
         />
         <View style={{ width: "100%", height: "42%" }}>
           <ScrollView style={{ width: "100%", height: "35%" }}>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
-            <ListItem friction={90} tension={100} activeScale={0.95}>
-              <Avatar
-                rounded
-                source={{
-                  uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
-                }}
-              />
-              <ListItem.Content>
-                <ListItem.Title style={{ fontWeight: "bold" }}>
-                  Chris Jackson
-                </ListItem.Title>
-              </ListItem.Content>
-              <ListItem.Chevron />
-            </ListItem>
+            {this.state.contacts.map(contact => {
+              return (
+                <ListItem
+                  friction={90}
+                  tension={100}
+                  activeScale={0.95}
+                  key={contact.id}
+                  topDivider={true}
+                  bottomDivider={true}
+                >
+                  <Avatar
+                    rounded
+                    source={{
+                      uri: "https://toppng.com/uploads/preview/roger-berry-avatar-placeholder-11562991561rbrfzlng6h.png",
+                    }}
+                  />
+                  <ListItem.Content>
+                    <ListItem.Title style={{ fontWeight: "bold" }}>
+                      {contact.first_name} {contact.last_name}
+                    </ListItem.Title>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              );
+            })}
           </ScrollView>
 
           <View
@@ -283,7 +225,7 @@ export default class Home extends Component {
               iconContainerStyle={{ background: "#2089DC" }}
               loadingProps={{ animating: true }}
               loadingStyle={{}}
-              onPress={() => alert("click")}
+              onPress={this.onRefreshHandler}
               titleProps={{}}
             />
             <Text

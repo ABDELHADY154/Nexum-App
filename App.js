@@ -9,6 +9,8 @@ import { StatusBar } from "expo-status-bar";
 import SignIn from "./src/Components/Authentication/SignIn";
 import Home from "./src/Components/Home/Home";
 import { axios } from "./src/API/Axios";
+import AddContact from "./src/Components/Contact/AddContact";
+import Contacts from "./src/Components/Contact/Contacts";
 
 const AuthContext = React.createContext();
 const Stack = createStackNavigator();
@@ -76,7 +78,27 @@ export default function App({ navigation }) {
     }),
     [],
   );
+  const AddNewContactScreen = props => {
+    const navigation = useNavigation();
+    return <AddContact {...props} navigation={navigation} />;
+  };
+  const ContactsScreen = props => {
+    const navigation = useNavigation();
+    return <Contacts {...props} navigation={navigation} />;
+  };
+  const HomeScreen = props => {
+    const navigation = useNavigation();
 
+    return (
+      <Home
+        {...props}
+        navigation={navigation}
+        logout={() => {
+          dispatch({ type: "SIGN_OUT" });
+        }}
+      />
+    );
+  };
   return (
     <AuthContext.Provider value={authContext}>
       <SafeAreaProvider>
@@ -99,12 +121,28 @@ export default function App({ navigation }) {
               <>
                 <Stack.Screen
                   name="Home"
-                  component={Home}
+                  component={HomeScreen}
                   options={{
                     animationTypeForReplace: state.isSignout ? "pop" : "push",
                     header: () => {
                       "none";
                     },
+                  }}
+                />
+                <Stack.Screen
+                  name="AddNewContact"
+                  component={AddNewContactScreen}
+                  options={{
+                    animationTypeForReplace: state.isSignout ? "pop" : "push",
+                    title: "Add New Contact",
+                  }}
+                />
+                <Stack.Screen
+                  name="Contacts"
+                  component={ContactsScreen}
+                  options={{
+                    animationTypeForReplace: state.isSignout ? "pop" : "push",
+                    title: "Phone Book",
                   }}
                 />
               </>
