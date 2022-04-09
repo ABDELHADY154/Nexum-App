@@ -164,7 +164,7 @@ export default function App({ navigation }) {
             )}
           </Stack.Navigator>
         </NavigationContainer>
-        <StatusBar style="light" />
+        <StatusBar style="auto" />
       </SafeAreaProvider>
     </AuthContext.Provider>
   );
